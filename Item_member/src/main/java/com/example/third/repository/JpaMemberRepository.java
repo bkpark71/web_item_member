@@ -24,7 +24,7 @@ public class JpaMemberRepository implements MemberRepository {
         return Optional.ofNullable(em.find(Member.class, id));
     }
     @Override
-    public Optional<Member> findByLoginId(String loginId) { // loginid 대소문자 구분 확인
+    public Optional<Member> findByLoginId(String loginId) { // loginid 대소문자 구분 확인 => login_id jpa ddl create 자동으로 생성함
         return em.createQuery("SELECT m FROM Member m where login_id = :loginId", Member.class)
                 .setParameter("loginId", loginId)
                 .getResultList()

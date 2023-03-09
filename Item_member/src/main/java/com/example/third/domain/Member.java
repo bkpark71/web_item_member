@@ -14,7 +14,6 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "login_id", length = 10, nullable = false)
-    @NotNull
     private String loginId; // loginId ==> login_id 자동으로 필드 이름 변경
     @Column(length=45, nullable = false)
     private String name;
