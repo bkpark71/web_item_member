@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface MemberRepository {
     public Member save(Member member);
     public Optional<Member> findById(Long id);
+    public Optional<Member> findByLoginId(String loginId);
     public List<Member> findAll();
     public void update(Long id, Member member);
 }
