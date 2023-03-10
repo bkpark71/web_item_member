@@ -31,7 +31,11 @@ public class JpaMemberRepository implements MemberRepository {
                 .stream()
                 .filter(m -> m.getLoginId().equals(loginId))
                 .findAny();
-    }
+    }// select * from member where login_id = ? ("aaa")
+    //em.createQuery("SELECT m FROM Member m where name = :name", Member.class)
+    //.setParameter("name", name)
+
+
     @Override
     public List<Member> findAll() {
         List<Member> members = em.createQuery("select m from Member m", Member.class)

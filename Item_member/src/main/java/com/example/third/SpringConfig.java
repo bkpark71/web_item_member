@@ -1,11 +1,10 @@
 package com.example.third;
 
-import com.example.third.repository.ItemRepository;
-import com.example.third.repository.JpaMemberRepository;
-import com.example.third.repository.MemberRepository;
-import com.example.third.repository.MemoryItemRepository;
+import com.example.third.repository.*;
 import com.example.third.service.ItemService;
 import com.example.third.service.MemberService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,20 +12,23 @@ import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 
 @Configuration
+@RequiredArgsConstructor
 public class SpringConfig {
     private final EntityManager em;
-    private final DataSource dataSource;
-    public SpringConfig(DataSource dataSource, EntityManager em) {
-        this.dataSource = dataSource;
-        this.em = em;
-    }
+    //private final DataSource dataSource;
+//    @Autowired
+//    public SpringConfig(EntityManager em) {//DataSource dataSource,
+//        //this.dataSource = dataSource;
+//        this.em = em;
+//    }
     @Bean
     public ItemService itemService(){
         return new ItemService(itemRepository());
     }
     @Bean
     public ItemRepository itemRepository(){
-        return new MemoryItemRepository();
+        return new JpaItemRepository(em);
+        //return new MemoryItemRepository();
     }
     @Bean
     public MemberService memberService(){

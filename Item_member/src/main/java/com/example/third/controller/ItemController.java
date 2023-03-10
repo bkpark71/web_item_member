@@ -39,16 +39,13 @@ public class ItemController {
     @PostMapping("/edit/{id}")
     public String editItemSave(
             @PathVariable Long id,
-            @ModelAttribute ItemDTO itemDTO,
-            RedirectAttributes redirectAttribute) {
-//        Item item = itemService.findItemById(id).get();
-//        item.setItemName(itemDTO.getItemName());
-//        item.setPrice(itemDTO.getPrice());
-//        item.setQuantity(itemDTO.getQuantity());
+            ItemDTO itemDTO,
+            RedirectAttributes redirectAttribute,
+            Model model) {
         itemService.updateItem(id,itemDTO);
         redirectAttribute.addAttribute("id", id);
         redirectAttribute.addAttribute("status", true);
-        return "redirect:/basic/item/{id}" ;
+        return "redirect:/basic/item/{id}";
     }
     @GetMapping("/add")
     public String addItem() {
