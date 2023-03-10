@@ -5,12 +5,14 @@ import com.example.third.controller.session.MemberSession;
 import com.example.third.controller.session.SessionConst;
 import com.example.third.domain.Member;
 import com.example.third.service.MemberService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
+@Slf4j
 @Controller
 public class LoginController {
     MemberService memberService;
@@ -27,12 +30,19 @@ public class LoginController {
     }
     @GetMapping("/login")
     public String memberLogin(Model model){
+        //log.info(" ===== 로그인 get ==== redirectURL: {}",redirectURL);
         Member member = new Member();
         model.addAttribute("member",member);
         return "login";
     }
     @PostMapping("/login")
-    public String memberLogin(@ModelAttribute Member member, HttpServletRequest request){ // HttpServletResponse response,
+    public String memberLogin(
+            @ModelAttribute Member member,
+            HttpServletRequest request,
+            @RequestParam(defaultValue = "/") String redirectURL){ // HttpServletResponse response,
+
+        log.info(" ===== 로그인 post ==== redirectURL: {}",redirectURL);
+
         String loginId = member.getLoginId();
         Optional<Member> member1 = memberService.findMember(loginId);// member 가 존재해야 함. member.password == 화면에서 입력한 password 랑 일치해야 함
 
@@ -55,8 +65,8 @@ public class LoginController {
 
 //            Cookie memberId = new Cookie(CookieConst.NAME, String.valueOf(member1.get().getId()));
 //            response.addCookie(memberId);
-
-            return "redirect:/";
+            // 미인증 사용자가 로그인 성공한 후에 최초 요청한 페이지로 돌려보내기 위함.
+            return "redirect:" + redirectURL;
         }
         return "redirect:/login";
     }

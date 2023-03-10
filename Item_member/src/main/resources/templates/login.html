@@ -6,7 +6,8 @@
 </head>
 <body>
 <div><h1>로그인</h1></div>
-<form action="/login" th:object="${member}" method="post">
+<!-- action 을 비워놓으면 get 으로 들어온 url과 동일하게 post 로 그대로 가지고 감 -->
+<form th:action th:object="${member}" method="post">
     <div>
         <label for="loginId">로그인ID</label>
         <input type="text" id="loginId" th:field="*{loginId}" placeholder="아이디를 입력해주세요"></input>
