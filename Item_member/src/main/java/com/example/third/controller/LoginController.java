@@ -1,8 +1,10 @@
 package com.example.third.controller;
 
+import com.example.third.controller.session.CookieConst;
+import com.example.third.controller.session.MemberSession;
+import com.example.third.controller.session.SessionConst;
 import com.example.third.domain.Member;
 import com.example.third.service.MemberService;
-import com.example.third.session.CookieConst;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,7 +13,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 @Controller
@@ -28,7 +32,7 @@ public class LoginController {
         return "login";
     }
     @PostMapping("/login")
-    public String memberLogin(@ModelAttribute Member member, HttpServletResponse response){
+    public String memberLogin(@ModelAttribute Member member, HttpServletRequest request){ // HttpServletResponse response,
         String loginId = member.getLoginId();
         Optional<Member> member1 = memberService.findMember(loginId);// member 가 존재해야 함. member.password == 화면에서 입력한 password 랑 일치해야 함
 
@@ -37,13 +41,37 @@ public class LoginController {
         // true && false ==> false   두번째 조건식에 따라 true이거나 false가 되기 때문에 두번째 조건식을 반드시 조사함.
         // true && true ==> true     두번째 조건식에 따라 true이거나 false가 되기 때문에 두번째 조건식을 반드시 조사함.
         // 문제 상황 -- > member1 empty 인 경우 [ ] 빈 리스트, NoSuchElementException 발생
-        if(!member1.isEmpty() && member1.get().getPassword().equals(member.getPassword())){
-            Cookie memberId = new Cookie("MemberId", String.valueOf(member1.get().getId()));
-            response.addCookie(memberId);
+        if(!member1.isEmpty() && member1.get().getPassword().equals(member.getPassword())){ // 로그인에 성공하면
 
-            return "redirect:/basic/items";
+            Member loginMember = member1.get();
+
+            MemberSession memberSession = new MemberSession();
+            memberSession.setId(loginMember.getId());
+            memberSession.setLoginId(loginMember.getLoginId());
+            memberSession.setName(loginMember.getName());
+
+            HttpSession session = request.getSession(true);//true 세션이 없으면 만들어주고, 있으면 있는 세션을 반환
+            session.setAttribute(SessionConst.NAME, memberSession);
+
+//            Cookie memberId = new Cookie(CookieConst.NAME, String.valueOf(member1.get().getId()));
+//            response.addCookie(memberId);
+
+            return "redirect:/";
         }
         return "redirect:/login";
     }
 
+    @PostMapping("/logout")
+    public String logout(
+            HttpServletRequest request) { // HttpServletResponse response){
+
+        HttpSession session = request.getSession(false); // 있으면 있는 것 반환, 없으면 null 반환
+        if(session != null) {
+            session.invalidate();
+        }
+//        Cookie cookie = new Cookie(CookieConst.NAME, null);
+//        cookie.setMaxAge(0);
+//        response.addCookie(cookie);
+        return "redirect:/" ;
+    }
 }

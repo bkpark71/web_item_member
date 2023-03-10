@@ -9,7 +9,9 @@
 <div>
     <h3 th:text="|로그인 사용자:${member.name}|"></h3>
   <button type="button" th:onclick="|location.href='@{/basic/items}'|">상품목록관리</button>
-  <button type="button" th:onclick="|location.href='@{/logout}'|">로그아웃</button>
+    <form action="/logout" method="post">
+        <button type="submit">로그아웃</button>
+    </form>
 </div>
 </body>
 </html>
